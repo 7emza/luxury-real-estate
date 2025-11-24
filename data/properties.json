@@ -1,0 +1,358 @@
+{
+  "properties": [
+    {
+      "id": 1,
+      "title": "Luxury Beachfront Villa",
+      "type": "Villa",
+      "status": "For Sale",
+      "price": 4500000,
+      "location": "Dubai Marina, Dubai",
+      "address": "Palm Jumeirah, Dubai, UAE",
+      "bedrooms": 5,
+      "bathrooms": 6,
+      "area": 8500,
+      "yearBuilt": 2022,
+      "description": "Stunning beachfront villa with panoramic ocean views, private beach access, infinity pool, and state-of-the-art smart home technology. This architectural masterpiece offers the ultimate in luxury living.",
+      "features": [
+        "Private Beach Access",
+        "Infinity Pool",
+        "Smart Home System",
+        "Private Gym",
+        "Home Theater",
+        "Wine Cellar",
+        "Maid's Quarters",
+        "4-Car Garage",
+        "Landscaped Gardens",
+        "Security System"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800",
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"
+      ],
+      "featured": true,
+      "luxury": true,
+      "agent": {
+        "name": "Sarah Johnson",
+        "phone": "+971 50 123 4567",
+        "email": "sarah@luxuryrealestate.com",
+        "image": "https://randomuser.me/api/portraits/women/1.jpg"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Modern Penthouse Suite",
+      "type": "Apartment",
+      "status": "For Sale",
+      "price": 2800000,
+      "location": "Downtown Dubai",
+      "address": "Burj Khalifa District, Dubai, UAE",
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "area": 4200,
+      "yearBuilt": 2023,
+      "description": "Exquisite penthouse with 360-degree city views, premium finishes, and exclusive access to world-class amenities. Located in the heart of Downtown Dubai.",
+      "features": [
+        "Panoramic City Views",
+        "Private Elevator",
+        "Smart Home",
+        "Jacuzzi",
+        "Private Terrace",
+        "Concierge Service",
+        "Valet Parking",
+        "Gym Access",
+        "Pool Access"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+        "https://images.unsplash.com/photo-1567684014761-b65e2e59b9eb?w=800"
+      ],
+      "featured": true,
+      "luxury": true,
+      "agent": {
+        "name": "Michael Chen",
+        "phone": "+971 50 234 5678",
+        "email": "michael@luxuryrealestate.com",
+        "image": "https://randomuser.me/api/portraits/men/2.jpg"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Contemporary Family Home",
+      "type": "Villa",
+      "status": "For Sale",
+      "price": 3200000,
+      "location": "Arabian Ranches, Dubai",
+      "address": "Arabian Ranches 3, Dubai, UAE",
+      "bedrooms": 6,
+      "bathrooms": 7,
+      "area": 6800,
+      "yearBuilt": 2021,
+      "description": "Spacious family villa in prestigious gated community with golf course views, private pool, and beautifully landscaped gardens.",
+      "features": [
+        "Golf Course Views",
+        "Private Pool",
+        "Garden",
+        "Study Room",
+        "Maid's Room",
+        "BBQ Area",
+        "Children's Play Area",
+        "3-Car Garage",
+        "24/7 Security"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800",
+        "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800"
+      ],
+      "featured": false,
+      "luxury": false,
+      "agent": {
+        "name": "Emma Williams",
+        "phone": "+971 50 345 6789",
+        "email": "emma@luxuryrealestate.com",
+        "image": "https://randomuser.me/api/portraits/women/3.jpg"
+      }
+    },
+    {
+      "id": 4,
+      "title": "Elegant Townhouse",
+      "type": "Townhouse",
+      "status": "For Rent",
+      "price": 180000,
+      "pricePerMonth": 15000,
+      "location": "JBR, Dubai",
+      "address": "Jumeirah Beach Residence, Dubai, UAE",
+      "bedrooms": 3,
+      "bathrooms": 4,
+      "area": 2800,
+      "yearBuilt": 2020,
+      "description": "Modern townhouse with beach access, contemporary design, and premium amenities in the vibrant JBR community.",
+      "features": [
+        "Beach Access",
+        "Community Pool",
+        "Gym",
+        "Parking",
+        "Storage",
+        "Balcony",
+        "Walk-in Closets",
+        "Built-in Wardrobes"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800",
+        "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?w=800",
+        "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=800"
+      ],
+      "featured": false,
+      "luxury": false,
+      "agent": {
+        "name": "David Martinez",
+        "phone": "+971 50 456 7890",
+        "email": "david@luxuryrealestate.com",
+        "image": "https://randomuser.me/api/portraits/men/4.jpg"
+      }
+    },
+    {
+      "id": 5,
+      "title": "Waterfront Mansion",
+      "type": "Villa",
+      "status": "For Sale",
+      "price": 12500000,
+      "location": "Palm Jumeirah, Dubai",
+      "address": "Palm Jumeirah Fronds, Dubai, UAE",
+      "bedrooms": 8,
+      "bathrooms": 10,
+      "area": 15000,
+      "yearBuilt": 2023,
+      "description": "Ultra-luxury waterfront mansion with private beach, dock, pool, spa, cinema, and exceptional views of Dubai skyline and Arabian Gulf.",
+      "features": [
+        "Private Beach",
+        "Private Dock",
+        "Infinity Pool",
+        "Spa & Sauna",
+        "Home Cinema",
+        "Wine Cellar",
+        "Elevator",
+        "Smart Home",
+        "Staff Quarters",
+        "6-Car Garage",
+        "Helipad",
+        "Private Gym"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800",
+        "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"
+      ],
+      "featured": true,
+      "luxury": true,
+      "agent": {
+        "name": "Sophia Anderson",
+        "phone": "+971 50 567 8901",
+        "email": "sophia@luxuryrealestate.com",
+        "image": "https://randomuser.me/api/portraits/women/5.jpg"
+      }
+    },
+    {
+      "id": 6,
+      "title": "Luxury Studio Apartment",
+      "type": "Apartment",
+      "status": "For Rent",
+      "price": 55000,
+      "pricePerMonth": 4583,
+      "location": "Business Bay, Dubai",
+      "address": "Business Bay Executive Towers, Dubai, UAE",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "area": 650,
+      "yearBuilt": 2019,
+      "description": "Stylish studio apartment with modern finishes, built-in appliances, and access to premium building amenities.",
+      "features": [
+        "Fully Furnished",
+        "Built-in Kitchen",
+        "Balcony",
+        "Pool Access",
+        "Gym",
+        "Parking",
+        "24/7 Security",
+        "Concierge"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+        "https://images.unsplash.com/photo-1536376072261-38c75010e6c9?w=800",
+        "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800"
+      ],
+      "featured": false,
+      "luxury": false,
+      "agent": {
+        "name": "James Wilson",
+        "phone": "+971 50 678 9012",
+        "email": "james@luxuryrealestate.com",
+        "image": "https://randomuser.me/api/portraits/men/6.jpg"
+      }
+    },
+    {
+      "id": 7,
+      "title": "Premium Office Space",
+      "type": "Commercial",
+      "status": "For Rent",
+      "price": 350000,
+      "pricePerMonth": 29167,
+      "location": "DIFC, Dubai",
+      "address": "Dubai International Financial Centre, Dubai, UAE",
+      "bedrooms": 0,
+      "bathrooms": 4,
+      "area": 3500,
+      "yearBuilt": 2022,
+      "description": "Grade A office space in the prestigious DIFC district with panoramic views, fitted offices, and world-class facilities.",
+      "features": [
+        "Fitted Offices",
+        "Meeting Rooms",
+        "Pantry",
+        "Server Room",
+        "Parking Spaces",
+        "24/7 Access",
+        "Security",
+        "High-speed Internet",
+        "Air Conditioning"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800",
+        "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800",
+        "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800"
+      ],
+      "featured": false,
+      "luxury": false,
+      "agent": {
+        "name": "Olivia Brown",
+        "phone": "+971 50 789 0123",
+        "email": "olivia@luxuryrealestate.com",
+        "image": "https://randomuser.me/api/portraits/women/7.jpg"
+      }
+    },
+    {
+      "id": 8,
+      "title": "Spacious Family Apartment",
+      "type": "Apartment",
+      "status": "For Sale",
+      "price": 1850000,
+      "location": "Dubai Hills Estate",
+      "address": "Dubai Hills, Mohammed Bin Rashid City, Dubai, UAE",
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "area": 2200,
+      "yearBuilt": 2021,
+      "description": "Beautiful 3-bedroom apartment overlooking the golf course with spacious layout, quality finishes, and family-friendly amenities.",
+      "features": [
+        "Golf Course View",
+        "Balcony",
+        "Maid's Room",
+        "Storage",
+        "2 Parking Spaces",
+        "Pool",
+        "Gym",
+        "Children's Play Area",
+        "BBQ Area"
+      ],
+      "images": [
+        "https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=800",
+        "https://images.unsplash.com/photo-1502672260066-6bc35f0a1f53?w=800",
+        "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800"
+      ],
+      "featured": false,
+      "luxury": false,
+      "agent": {
+        "name": "Daniel Taylor",
+        "phone": "+971 50 890 1234",
+        "email": "daniel@luxuryrealestate.com",
+        "image": "https://randomuser.me/api/portraits/men/8.jpg"
+      }
+    }
+  ],
+  "cities": [
+    {
+      "name": "Dubai Marina",
+      "properties": 156,
+      "image": "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800"
+    },
+    {
+      "name": "Downtown Dubai",
+      "properties": 234,
+      "image": "https://images.unsplash.com/photo-1582672060674-bc2bd808a8b5?w=800"
+    },
+    {
+      "name": "Palm Jumeirah",
+      "properties": 89,
+      "image": "https://images.unsplash.com/photo-1580837119756-563d608dd119?w=800"
+    },
+    {
+      "name": "Arabian Ranches",
+      "properties": 112,
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"
+    }
+  ],
+  "testimonials": [
+    {
+      "name": "John Smith",
+      "role": "Property Investor",
+      "image": "https://randomuser.me/api/portraits/men/10.jpg",
+      "rating": 5,
+      "text": "Exceptional service! They helped me find my dream villa in Palm Jumeirah. The team was professional, knowledgeable, and made the entire process seamless."
+    },
+    {
+      "name": "Maria Garcia",
+      "role": "Homeowner",
+      "image": "https://randomuser.me/api/portraits/women/11.jpg",
+      "rating": 5,
+      "text": "I couldn't be happier with my new penthouse. The attention to detail and personalized service exceeded all my expectations. Highly recommended!"
+    },
+    {
+      "name": "Ahmed Hassan",
+      "role": "Business Owner",
+      "image": "https://randomuser.me/api/portraits/men/12.jpg",
+      "rating": 5,
+      "text": "They found the perfect office space for our company in DIFC. Professional, efficient, and always available to answer our questions."
+    }
+  ]
+}
