@@ -23,7 +23,7 @@ export default function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl">
+    <form onSubmit={handleSubmit} className="bg-white/10 dark:bg-black/30 backdrop-blur-md rounded-2xl p-6 shadow-xl">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Location */}
         <div>
@@ -31,7 +31,7 @@ export default function SearchBar() {
           <select
             value={filters.location}
             onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-            className="w-full px-4 py-3 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-amber-600 outline-none"
+            className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-500 outline-none"
           >
             <option value="">All Locations</option>
             <option value="Dubai Marina">Dubai Marina</option>
@@ -51,7 +51,7 @@ export default function SearchBar() {
           <select
             value={filters.type}
             onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-            className="w-full px-4 py-3 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-amber-600 outline-none"
+            className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-500 outline-none"
           >
             <option value="">All Types</option>
             <option value="villa">Villa</option>
@@ -67,7 +67,7 @@ export default function SearchBar() {
           <select
             value={filters.priceRange}
             onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
-            className="w-full px-4 py-3 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-amber-600 outline-none"
+            className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-500 outline-none"
           >
             <option value="">Any Price</option>
             <option value="0-1000000">Under $1M</option>
@@ -81,7 +81,7 @@ export default function SearchBar() {
         <div className="flex items-end">
           <button
             type="submit"
-            className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center gap-2"
+            className="w-full bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
