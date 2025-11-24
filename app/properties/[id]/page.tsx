@@ -11,8 +11,9 @@ export function generateStaticParams() {
   }));
 }
 
-export default function PropertyDetailPage({ params }: { params: { id: string } }) {
-  const property = getPropertyById(parseInt(params.id));
+export default async function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const property = getPropertyById(parseInt(id));
 
   if (!property) {
     notFound();
