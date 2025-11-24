@@ -7,7 +7,30 @@ export interface TranslationStrings {
 export interface Translations {
   en: TranslationStrings;
   ar: TranslationStrings;
+  fr: TranslationStrings;
+  es: TranslationStrings;
+  de: TranslationStrings;
+  ru: TranslationStrings;
+  'ma-darija': TranslationStrings;
+  'ma-tifinagh': TranslationStrings;
   [language: string]: TranslationStrings;
+}
+
+export interface Currency {
+  code: string; // ISO 4217 currency code (e.g., "USD", "EUR", "MAD")
+  symbol: string; // Currency symbol (e.g., "$", "€", "DH")
+  name: string; // Full name (e.g., "US Dollar", "Euro", "Moroccan Dirham")
+  symbolPosition: 'before' | 'after'; // Where to place symbol relative to amount
+  decimalPlaces: number; // Number of decimal places (usually 2)
+}
+
+export interface LanguageConfig {
+  code: string; // Language code (e.g., "en", "ar", "fr")
+  name: string; // Display name in English (e.g., "English", "Arabic")
+  nativeName: string; // Display name in native language (e.g., "English", "العربية")
+  currencies: string[]; // Available currency codes for this language
+  defaultCurrency: string; // Default currency code
+  rtl: boolean; // Is this language right-to-left
 }
 
 export interface SiteSettings {
@@ -110,8 +133,10 @@ export interface ApiResponse<T> {
 // Endpoint-specific response types
 export interface TranslationsResponse {
   translations: Translations;
+  languages: LanguageConfig[];
+  currencies: Currency[];
   defaultLanguage: string;
-  availableLanguages: string[];
+  defaultCurrency: string;
 }
 
 export interface HomePageContent {
@@ -201,4 +226,49 @@ export interface PropertyLabels {
   luxury: string;
   forSale: string;
   forRent: string;
+}
+
+// Property-related types
+export interface Agent {
+  name: string;
+  phone: string;
+  email: string;
+  image: string;
+}
+
+export interface Property {
+  id: number;
+  title: string;
+  type: 'Villa' | 'Apartment' | 'Townhouse' | 'Commercial';
+  status: 'For Sale' | 'For Rent';
+  price: number;
+  pricePerMonth?: number;
+  location: string;
+  address: string;
+  bedrooms: number;
+  bathrooms: number;
+  area: number;
+  yearBuilt: number;
+  description: string;
+  features: string[];
+  images: string[];
+  featured: boolean;
+  luxury: boolean;
+  agent: Agent;
+}
+
+export interface SearchFilters {
+  location?: string;
+  type?: string;
+  priceRange?: string;
+  bedrooms?: number;
+  status?: string;
+  sortBy?: string;
+}
+
+// Extend Location to match data structure
+export interface City {
+  name: string;
+  properties: number;
+  image: string;
 }

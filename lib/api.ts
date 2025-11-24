@@ -5,6 +5,10 @@ import {
   SiteSettings,
   FeatureHighlight,
   PropertyCategory,
+  City,
+  Testimonial,
+  Property,
+  SearchFilters,
 } from '@/types/api';
 
 // Base API URL - Change this to your WordPress API URL
@@ -22,8 +26,10 @@ export async function getTranslations(): Promise<TranslationsResponse> {
 
     return {
       translations: mockData.translations,
+      languages: mockData.languages,
+      currencies: mockData.currencies,
       defaultLanguage: 'en',
-      availableLanguages: ['en', 'ar'],
+      defaultCurrency: 'USD',
     };
   } catch (error) {
     console.error('Error fetching translations:', error);
@@ -124,4 +130,156 @@ export function getTranslation(
   }
 
   return translation;
+}
+
+/**
+ * Fetch cities/locations
+ * WordPress Endpoint: /wp-json/api/v1/locations
+ */
+export async function getCities(): Promise<City[]> {
+  try {
+    // For now, return mock data
+    // Later: const response = await fetch(`${API_BASE_URL}/locations`);
+    // Later: return await response.json();
+
+    return mockData.cities as City[];
+  } catch (error) {
+    console.error('Error fetching cities:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch testimonials
+ * WordPress Endpoint: /wp-json/api/v1/testimonials
+ */
+export async function getTestimonials(): Promise<Testimonial[]> {
+  try {
+    // For now, return mock data
+    // Later: const response = await fetch(`${API_BASE_URL}/testimonials`);
+    // Later: return await response.json();
+
+    return mockData.testimonials as Testimonial[];
+  } catch (error) {
+    console.error('Error fetching testimonials:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch all properties
+ * WordPress Endpoint: /wp-json/api/v1/properties
+ */
+export async function getAllProperties(): Promise<Property[]> {
+  try {
+    // For now, return mock data
+    // Later: const response = await fetch(`${API_BASE_URL}/properties`);
+    // Later: return await response.json();
+
+    return mockData.properties as Property[];
+  } catch (error) {
+    console.error('Error fetching properties:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch featured properties
+ * WordPress Endpoint: /wp-json/api/v1/properties?featured=true
+ */
+export async function getFeaturedProperties(): Promise<Property[]> {
+  try {
+    // For now, return mock data
+    // Later: const response = await fetch(`${API_BASE_URL}/properties?featured=true`);
+    // Later: return await response.json();
+
+    const properties = mockData.properties as Property[];
+    return properties.filter((p) => p.featured);
+  } catch (error) {
+    console.error('Error fetching featured properties:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch a single property by ID
+ * WordPress Endpoint: /wp-json/api/v1/properties/{id}
+ */
+export async function getPropertyById(id: number): Promise<Property | undefined> {
+  try {
+    // For now, return mock data
+    // Later: const response = await fetch(`${API_BASE_URL}/properties/${id}`);
+    // Later: return await response.json();
+
+    const properties = mockData.properties as Property[];
+    return properties.find((p) => p.id === id);
+  } catch (error) {
+    console.error('Error fetching property:', error);
+    throw error;
+  }
+}
+
+/**
+ * Search properties with filters
+ * WordPress Endpoint: /wp-json/api/v1/properties/search
+ */
+export async function searchProperties(filters: SearchFilters): Promise<Property[]> {
+  try {
+    // For now, filter mock data
+    // Later: Build query params and fetch from WordPress
+    // const params = new URLSearchParams();
+    // if (filters.location) params.append('location', filters.location);
+    // if (filters.type) params.append('type', filters.type);
+    // const response = await fetch(`${API_BASE_URL}/properties/search?${params}`);
+    // return await response.json();
+
+    let results = mockData.properties as Property[];
+
+    if (filters.location) {
+      results = results.filter((p) =>
+        p.location.toLowerCase().includes(filters.location!.toLowerCase())
+      );
+    }
+
+    if (filters.type) {
+      results = results.filter((p) =>
+        p.type.toLowerCase() === filters.type!.toLowerCase()
+      );
+    }
+
+    if (filters.status) {
+      results = results.filter((p) =>
+        p.status.toLowerCase() === filters.status!.toLowerCase()
+      );
+    }
+
+    if (filters.bedrooms) {
+      results = results.filter((p) => p.bedrooms >= filters.bedrooms!);
+    }
+
+    if (filters.priceRange) {
+      const [min, max] = filters.priceRange.split('-').map(Number);
+      results = results.filter((p) => p.price >= min && p.price <= max);
+    }
+
+    // Apply sorting
+    if (filters.sortBy) {
+      switch (filters.sortBy) {
+        case 'price-low':
+          results.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          results.sort((a, b) => b.price - a.price);
+          break;
+        case 'featured':
+          results.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+          break;
+      }
+    }
+
+    return results;
+  } catch (error) {
+    console.error('Error searching properties:', error);
+    throw error;
+  }
 }
