@@ -13,14 +13,13 @@ body {
   font-family: var(--font-sans);
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: white;
+  color: rgb(17, 24, 39);
 }
 
-body {
-  @apply bg-white text-gray-900;
-}
-
-.dark body {
-  @apply bg-gray-900 text-gray-100;
+html.dark body {
+  background-color: black;
+  color: rgb(243, 244, 246);
 }
 
 h1, h2, h3, h4, h5, h6 {

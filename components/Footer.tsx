@@ -1,40 +1,45 @@
+'use client';
+
 import Link from 'next/link';
+import { useTranslation, useContent } from '@/contexts/ContentContext';
 
 export default function Footer() {
+  const { t } = useTranslation();
+  const { siteSettings } = useContent();
   return (
     <footer className="bg-gray-900 dark:bg-black text-white border-t border-gray-800 dark:border-gray-900">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About */}
           <div>
-            <h3 className="text-xl font-bold text-amber-600 dark:text-amber-500 mb-4">LuxuryEstates</h3>
+            <h3 className="text-xl font-bold text-amber-600 dark:text-amber-500 mb-4">{siteSettings?.siteName || 'LuxuryEstates'}</h3>
             <p className="text-gray-400 dark:text-gray-500 mb-4">
-              Your trusted partner in finding luxury properties in Dubai's most prestigious locations.
+              {t('footer.about')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+            <h4 className="text-lg font-semibold mb-4">{t('footer.quickLinks')}</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/" className="text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-500 transition">
-                  Home
+                  {t('nav.home')}
                 </Link>
               </li>
               <li>
                 <Link href="/properties" className="text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-500 transition">
-                  Properties
+                  {t('nav.properties')}
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-500 transition">
-                  About Us
+                  {t('nav.about')}
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-500 transition">
-                  Contact
+                  {t('nav.contact')}
                 </Link>
               </li>
             </ul>
@@ -42,26 +47,26 @@ export default function Footer() {
 
           {/* Property Types */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Property Types</h4>
+            <h4 className="text-lg font-semibold mb-4">{t('footer.propertyTypes')}</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="/properties?type=villa" className="text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-500 transition">
-                  Villas
+                  {t('type.villas')}
                 </Link>
               </li>
               <li>
                 <Link href="/properties?type=apartment" className="text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-500 transition">
-                  Apartments
+                  {t('type.apartments')}
                 </Link>
               </li>
               <li>
                 <Link href="/properties?type=townhouse" className="text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-500 transition">
-                  Townhouses
+                  {t('type.townhouses')}
                 </Link>
               </li>
               <li>
                 <Link href="/properties?type=commercial" className="text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-500 transition">
-                  Commercial
+                  {t('type.commercial')}
                 </Link>
               </li>
             </ul>
@@ -69,17 +74,17 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
+            <h4 className="text-lg font-semibold mb-4">{t('footer.contact')}</h4>
             <ul className="space-y-2 text-gray-400 dark:text-gray-500">
-              <li>📞 +971 50 123 4567</li>
-              <li>✉️ info@luxuryestates.com</li>
-              <li>📍 Dubai, UAE</li>
+              <li>📞 {siteSettings?.contactInfo.phone || '+971 50 123 4567'}</li>
+              <li>✉️ {siteSettings?.contactInfo.email || 'info@luxuryestates.com'}</li>
+              <li>📍 {siteSettings?.contactInfo.address || 'Dubai, UAE'}</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 dark:border-gray-900 mt-8 pt-8 text-center text-gray-400 dark:text-gray-500">
-          <p>&copy; {new Date().getFullYear()} LuxuryEstates. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {siteSettings?.siteName || 'LuxuryEstates'}. {t('footer.copyright')}</p>
         </div>
       </div>
     </footer>

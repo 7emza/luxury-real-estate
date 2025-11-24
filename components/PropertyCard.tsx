@@ -1,12 +1,16 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Property } from '@/types/property';
+import { useTranslation } from '@/contexts/ContentContext';
 
 interface PropertyCardProps {
   property: Property;
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
+  const { t } = useTranslation();
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -17,7 +21,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
   return (
     <Link href={`/properties/${property.id}`}>
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 group">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 group">
         {/* Image */}
         <div className="relative h-64 overflow-hidden">
           <Image
@@ -33,13 +37,13 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 ? 'bg-green-500 text-white'
                 : 'bg-blue-500 text-white'
             }`}>
-              {property.status}
+              {property.status === 'For Sale' ? t('property.forSale') : t('property.forRent')}
             </span>
           </div>
           {property.luxury && (
             <div className="absolute top-4 right-4">
               <span className="px-3 py-1 rounded-full text-sm font-semibold bg-amber-600 text-white">
-                Luxury
+                {t('property.luxury')}
               </span>
             </div>
           )}
@@ -63,15 +67,15 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
           <div className="grid grid-cols-3 gap-4 mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
             <div className="text-center">
-              <div className="text-sm text-gray-600 dark:text-gray-400">Bedrooms</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{t('property.bedrooms')}</div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">{property.bedrooms}</div>
             </div>
             <div className="text-center">
-              <div className="text-sm text-gray-600 dark:text-gray-400">Bathrooms</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{t('property.bathrooms')}</div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">{property.bathrooms}</div>
             </div>
             <div className="text-center">
-              <div className="text-sm text-gray-600 dark:text-gray-400">Sq Ft</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{t('property.sqft')}</div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">{property.area.toLocaleString()}</div>
             </div>
           </div>
@@ -83,7 +87,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               </div>
               {property.pricePerMonth && (
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  {formatPrice(property.pricePerMonth)}/month
+                  {formatPrice(property.pricePerMonth)}{t('property.perMonth')}
                 </div>
               )}
             </div>

@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ContentProvider } from "@/contexts/ContentContext";
 
 const playfair = Playfair_Display({
   variable: "--font-display",
@@ -27,13 +28,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${playfair.variable} antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <Navbar />
-          <main className="pt-20">
-            {children}
-          </main>
-          <Footer />
+      <body className={`${inter.variable} ${playfair.variable} antialiased bg-white dark:bg-black text-gray-900 dark:text-gray-100`}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange={false}>
+          <ContentProvider>
+            <div className="min-h-screen bg-white dark:bg-black">
+              <Navbar />
+              <main className="pt-20">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </ContentProvider>
         </ThemeProvider>
       </body>
     </html>
