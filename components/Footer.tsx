@@ -118,9 +118,9 @@ export default function Footer() {
               <h4 className="text-lg font-semibold mb-4">{t('footer.contact')}</h4>
             )}
             <ul className="space-y-2 text-gray-400 dark:text-gray-500">
-              <li>📞 {siteSettings?.contactInfo.phone || '+971 50 123 4567'}</li>
-              <li>✉️ {siteSettings?.contactInfo.email || 'info@luxuryestates.com'}</li>
-              <li>📍 {siteSettings?.contactInfo.address || 'Dubai, UAE'}</li>
+              <li>{siteSettings?.contactInfo.phone || '+971 50 123 4567'}</li>
+              <li>{siteSettings?.contactInfo.email || 'info@luxuryestates.com'}</li>
+              <li>{siteSettings?.contactInfo.address || 'Dubai, UAE'}</li>
             </ul>
           </div>
         </div>
