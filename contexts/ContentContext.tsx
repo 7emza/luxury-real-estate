@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import {
   TranslationsResponse,
   SiteSettings,
@@ -8,10 +8,77 @@ import {
   PropertyCategory,
   LanguageConfig,
   Currency,
+  City,
+  Testimonial,
+  Property,
 } from '@/types/api';
-import { getTranslations, getSiteSettings, getFeatures, getCategories, getTranslation } from '@/lib/api';
+import {
+  getTranslations,
+  getSiteSettings,
+  getFeatures,
+  getCategories,
+  getCities,
+  getTestimonials,
+  getFeaturedProperties,
+  getTranslation
+} from '@/lib/api';
 import { formatPrice, formatPriceAbbreviated, formatPriceRange } from '@/lib/currency';
 import { detectBrowserLanguage, detectDefaultCurrency } from '@/lib/localeDetection';
+import mockData from '@/data/mock-api.json';
+
+// Cache configuration
+const CACHE_KEY = 'lre-content-cache';
+const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+
+interface CachedData {
+  timestamp: number;
+  translations: TranslationsResponse;
+  siteSettings: SiteSettings;
+  features: FeatureHighlight[];
+  categories: PropertyCategory[];
+  cities: City[];
+  testimonials: Testimonial[];
+  featuredProperties: Property[];
+}
+
+// Helper to check if cache is valid
+function getCachedData(): CachedData | null {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (!cached) return null;
+
+    const data: CachedData = JSON.parse(cached);
+    const now = Date.now();
+
+    // Check if cache has expired
+    if (now - data.timestamp > CACHE_EXPIRY_MS) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error reading cache:', error);
+    return null;
+  }
+}
+
+// Helper to save data to cache
+function setCachedData(data: Omit<CachedData, 'timestamp'>): void {
+  if (typeof window === 'undefined') return;
+
+  try {
+    const cacheData: CachedData = {
+      ...data,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+  } catch (error) {
+    console.error('Error saving cache:', error);
+  }
+}
 
 interface ContentContextType {
   // Language
@@ -36,6 +103,9 @@ interface ContentContextType {
   siteSettings: SiteSettings | null;
   features: FeatureHighlight[];
   categories: PropertyCategory[];
+  cities: City[];
+  testimonials: Testimonial[];
+  featuredProperties: Property[];
   isLoading: boolean;
   isRTL: boolean;
 }
@@ -47,16 +117,33 @@ interface ContentProviderProps {
   initialLanguage?: string;
 }
 
+// Get initial language from localStorage (client-side only)
+function getInitialLanguage(fallback: string): string {
+  if (typeof window === 'undefined') return fallback;
+  return localStorage.getItem('lre-language') || fallback;
+}
+
+// Get initial language config based on language code
+function getInitialLanguageConfig(langCode: string): LanguageConfig {
+  const lang = mockData.languages.find(l => l.code === langCode);
+  return lang as LanguageConfig || mockData.languages[0] as LanguageConfig;
+}
+
 export function ContentProvider({ children, initialLanguage = 'en' }: ContentProviderProps) {
-  const [language, setLanguageState] = useState<string>(initialLanguage);
-  const [languageConfig, setLanguageConfig] = useState<LanguageConfig | null>(null);
-  const [availableLanguages, setAvailableLanguages] = useState<LanguageConfig[]>([]);
+  // Initialize with saved language or fallback
+  const [language, setLanguageState] = useState<string>(() => getInitialLanguage(initialLanguage));
+  const [languageConfig, setLanguageConfig] = useState<LanguageConfig | null>(() => getInitialLanguageConfig(getInitialLanguage(initialLanguage)));
+  const [availableLanguages, setAvailableLanguages] = useState<LanguageConfig[]>(mockData.languages as LanguageConfig[]);
   const [currency, setCurrencyState] = useState<Currency | null>(null);
-  const [allCurrencies, setAllCurrencies] = useState<Currency[]>([]);
-  const [translations, setTranslations] = useState<TranslationsResponse['translations']>({});
+  const [allCurrencies, setAllCurrencies] = useState<Currency[]>(mockData.currencies as Currency[]);
+  // Initialize with mock translations to prevent showing keys
+  const [translations, setTranslations] = useState<TranslationsResponse['translations']>(mockData.translations as TranslationsResponse['translations']);
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [features, setFeatures] = useState<FeatureHighlight[]>([]);
   const [categories, setCategories] = useState<PropertyCategory[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load all content on mount
@@ -65,22 +152,117 @@ export function ContentProvider({ children, initialLanguage = 'en' }: ContentPro
       try {
         setIsLoading(true);
 
-        const [translationsData, settingsData, featuresData, categoriesData] = await Promise.all([
-          getTranslations(),
-          getSiteSettings(),
-          getFeatures(),
-          getCategories(),
-        ]);
+        // Try to get cached data first
+        const cached = getCachedData();
 
-        setTranslations(translationsData.translations);
-        setAvailableLanguages(translationsData.languages);
-        setAllCurrencies(translationsData.currencies);
-        setSiteSettings(settingsData);
-        setFeatures(featuresData);
-        setCategories(categoriesData);
+        let translationsData: TranslationsResponse;
+        let settingsData: SiteSettings;
+        let featuresData: FeatureHighlight[];
+        let categoriesData: PropertyCategory[];
+        let citiesData: City[];
+        let testimonialsData: Testimonial[];
+        let featuredPropertiesData: Property[];
+
+        if (cached) {
+          // Use cached data for instant loading
+          translationsData = cached.translations;
+          settingsData = cached.siteSettings;
+          featuresData = cached.features;
+          categoriesData = cached.categories;
+          citiesData = cached.cities;
+          testimonialsData = cached.testimonials;
+          featuredPropertiesData = cached.featuredProperties;
+
+          // Set state immediately from cache
+          setTranslations(translationsData.translations);
+          setAvailableLanguages(translationsData.languages);
+          setAllCurrencies(translationsData.currencies);
+          setSiteSettings(settingsData);
+          setFeatures(featuresData);
+          setCategories(categoriesData);
+          setCities(citiesData);
+          setTestimonials(testimonialsData);
+          setFeaturedProperties(featuredPropertiesData);
+
+          // Set loading to false immediately when we have cached data
+          // This prevents showing skeletons unnecessarily
+          setIsLoading(false);
+
+          // Refresh cache in background (stale-while-revalidate)
+          Promise.all([
+            getTranslations(),
+            getSiteSettings(),
+            getFeatures(),
+            getCategories(),
+            getCities(),
+            getTestimonials(),
+            getFeaturedProperties(),
+          ]).then(([newTranslations, newSettings, newFeatures, newCategories, newCities, newTestimonials, newFeatured]) => {
+            setCachedData({
+              translations: newTranslations,
+              siteSettings: newSettings,
+              features: newFeatures,
+              categories: newCategories,
+              cities: newCities,
+              testimonials: newTestimonials,
+              featuredProperties: newFeatured,
+            });
+            // Update state with fresh data
+            setTranslations(newTranslations.translations);
+            setAvailableLanguages(newTranslations.languages);
+            setAllCurrencies(newTranslations.currencies);
+            setSiteSettings(newSettings);
+            setFeatures(newFeatures);
+            setCategories(newCategories);
+            setCities(newCities);
+            setTestimonials(newTestimonials);
+            setFeaturedProperties(newFeatured);
+          }).catch(err => console.error('Background refresh failed:', err));
+
+        } else {
+          // No cache, fetch fresh data
+          const [newTranslations, newSettings, newFeatures, newCategories, newCities, newTestimonials, newFeatured] = await Promise.all([
+            getTranslations(),
+            getSiteSettings(),
+            getFeatures(),
+            getCategories(),
+            getCities(),
+            getTestimonials(),
+            getFeaturedProperties(),
+          ]);
+
+          translationsData = newTranslations;
+          settingsData = newSettings;
+          featuresData = newFeatures;
+          categoriesData = newCategories;
+          citiesData = newCities;
+          testimonialsData = newTestimonials;
+          featuredPropertiesData = newFeatured;
+
+          // Save to cache
+          setCachedData({
+            translations: translationsData,
+            siteSettings: settingsData,
+            features: featuresData,
+            categories: categoriesData,
+            cities: citiesData,
+            testimonials: testimonialsData,
+            featuredProperties: featuredPropertiesData,
+          });
+
+          setTranslations(translationsData.translations);
+          setAvailableLanguages(translationsData.languages);
+          setAllCurrencies(translationsData.currencies);
+          setSiteSettings(settingsData);
+          setFeatures(featuresData);
+          setCategories(categoriesData);
+          setCities(citiesData);
+          setTestimonials(testimonialsData);
+          setFeaturedProperties(featuredPropertiesData);
+        }
 
         // Determine initial language
-        const savedLanguage = localStorage.getItem('language');
+        const savedLanguage = typeof window !== 'undefined' ? localStorage.getItem('lre-language') : null;
         const detectedLanguage = detectBrowserLanguage();
 
         let languageToUse = initialLanguage;
@@ -96,8 +278,15 @@ export function ContentProvider({ children, initialLanguage = 'en' }: ContentPro
         setLanguageState(langConfig.code);
         setLanguageConfig(langConfig);
 
+        // Set language cookie for server components
+        if (typeof document !== 'undefined') {
+          const expires = new Date();
+          expires.setTime(expires.getTime() + 365 * 24 * 60 * 60 * 1000);
+          document.cookie = `language=${langConfig.code};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+        }
+
         // Determine initial currency
-        const savedCurrencyCode = localStorage.getItem('currencyCode');
+        const savedCurrencyCode = typeof window !== 'undefined' ? localStorage.getItem('lre-currency') : null;
         const detectedCurrency = detectDefaultCurrency(langConfig.code);
 
         let currencyCode = langConfig.defaultCurrency;
@@ -112,6 +301,13 @@ export function ContentProvider({ children, initialLanguage = 'en' }: ContentPro
         const currencyObj = translationsData.currencies.find(c => c.code === currencyCode);
         if (currencyObj) {
           setCurrencyState(currencyObj);
+
+          // Set currency cookie for server components
+          if (typeof document !== 'undefined') {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + 365 * 24 * 60 * 60 * 1000);
+            document.cookie = `currencyCode=${currencyObj.code};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+          }
         }
       } catch (error) {
         console.error('Error loading content:', error);
@@ -123,13 +319,25 @@ export function ContentProvider({ children, initialLanguage = 'en' }: ContentPro
     loadContent();
   }, [initialLanguage]);
 
+  // Helper to set cookie
+  const setCookie = (name: string, value: string, days: number = 365) => {
+    if (typeof document !== 'undefined') {
+      const expires = new Date();
+      expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+      document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+    }
+  };
+
   // Handle language change
   const setLanguage = (lang: string) => {
     const newLangConfig = availableLanguages.find(l => l.code === lang);
     if (newLangConfig) {
       setLanguageState(lang);
       setLanguageConfig(newLangConfig);
-      localStorage.setItem('language', lang);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('lre-language', lang);
+        setCookie('language', lang); // Also set cookie for server components
+      }
 
       // Check if current currency is valid for new language
       if (!newLangConfig.currencies.includes(currency?.code || '')) {
@@ -137,7 +345,10 @@ export function ContentProvider({ children, initialLanguage = 'en' }: ContentPro
         const newCurrency = allCurrencies.find(c => c.code === newLangConfig.defaultCurrency);
         if (newCurrency) {
           setCurrencyState(newCurrency);
-          localStorage.setItem('currencyCode', newCurrency.code);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('lre-currency', newCurrency.code);
+            setCookie('currencyCode', newCurrency.code); // Also set cookie for server components
+          }
         }
       }
     }
@@ -149,7 +360,10 @@ export function ContentProvider({ children, initialLanguage = 'en' }: ContentPro
       const newCurrency = allCurrencies.find(c => c.code === currencyCode);
       if (newCurrency) {
         setCurrencyState(newCurrency);
-        localStorage.setItem('currencyCode', currencyCode);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('lre-currency', currencyCode);
+          setCookie('currencyCode', currencyCode); // Also set cookie for server components
+        }
       }
     }
   };
@@ -206,6 +420,9 @@ export function ContentProvider({ children, initialLanguage = 'en' }: ContentPro
     siteSettings,
     features,
     categories,
+    cities,
+    testimonials,
+    featuredProperties,
     isLoading,
     isRTL,
   };

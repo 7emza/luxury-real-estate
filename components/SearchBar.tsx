@@ -1,17 +1,57 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from '@/contexts/ContentContext';
+import { useTranslation, useContent } from '@/contexts/ContentContext';
+import { Skeleton } from '@/components/Skeleton';
+import { getAllProperties } from '@/lib/api';
+import { generatePriceOptions, PriceOption } from '@/lib/priceUtils';
 
 export default function SearchBar() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, formatPriceAbbreviated, currency } = useTranslation();
+  const { isLoading, cities, categories } = useContent();
   const [filters, setFilters] = useState({
     location: '',
     type: '',
-    priceRange: '',
+    minPrice: '',
+    maxPrice: '',
   });
+  const [priceOptions, setPriceOptions] = useState<PriceOption[]>([]);
+
+  // Generate dynamic price options from actual properties
+  useEffect(() => {
+    async function loadPriceOptions() {
+      try {
+        const properties = await getAllProperties();
+
+        if (properties.length === 0 || !currency) {
+          setPriceOptions([]);
+          return;
+        }
+
+        // Get exchange rate (prices in DB are in MAD, convert to selected currency)
+        const exchangeRate = currency.exchangeRate || 1.0;
+
+        // Convert all property prices to selected currency
+        const prices = properties.map(p => Math.round(p.price / exchangeRate));
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+
+        // Generate smart price options
+        const options = generatePriceOptions(minPrice, maxPrice, formatPriceAbbreviated);
+
+        setPriceOptions(options);
+      } catch (error) {
+        console.error('Error loading price options:', error);
+        setPriceOptions([]);
+      }
+    }
+
+    if (!isLoading && currency) {
+      loadPriceOptions();
+    }
+  }, [isLoading, currency, formatPriceAbbreviated]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,14 +59,53 @@ export default function SearchBar() {
     const params = new URLSearchParams();
     if (filters.location) params.append('location', filters.location);
     if (filters.type) params.append('type', filters.type);
-    if (filters.priceRange) params.append('priceRange', filters.priceRange);
+    if (filters.minPrice) params.append('minPrice', filters.minPrice);
+    if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
 
     router.push(`/properties?${params.toString()}`);
   };
 
+  if (isLoading) {
+    return (
+      <div className="bg-white/10 dark:bg-black/50 backdrop-blur-md rounded-2xl p-6 shadow-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div>
+            <Skeleton className="h-4 w-20 mb-2 bg-white/20" />
+            <Skeleton className="h-12 w-full bg-white/30" />
+          </div>
+          <div>
+            <Skeleton className="h-4 w-24 mb-2 bg-white/20" />
+            <Skeleton className="h-12 w-full bg-white/30" />
+          </div>
+          <div>
+            <Skeleton className="h-4 w-20 mb-2 bg-white/20" />
+            <Skeleton className="h-12 w-full bg-white/30" />
+          </div>
+          <div>
+            <Skeleton className="h-4 w-20 mb-2 bg-white/20" />
+            <Skeleton className="h-12 w-full bg-white/30" />
+          </div>
+          <div className="flex items-end">
+            <Skeleton className="h-12 w-full bg-amber-600/50" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Filter max price options based on min price selection
+  const maxPriceOptions = filters.minPrice
+    ? priceOptions.filter(opt => opt.value > parseInt(filters.minPrice))
+    : priceOptions;
+
+  // Filter min price options based on max price selection
+  const minPriceOptions = filters.maxPrice
+    ? priceOptions.filter(opt => opt.value < parseInt(filters.maxPrice))
+    : priceOptions;
+
   return (
     <form onSubmit={handleSubmit} className="bg-white/10 dark:bg-black/50 backdrop-blur-md rounded-2xl p-6 shadow-xl">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Location */}
         <div>
           <label className="block text-white text-sm font-medium mb-2">{t('search.location')}</label>
@@ -36,14 +115,11 @@ export default function SearchBar() {
             className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-500 outline-none"
           >
             <option value="">{t('search.locationAll')}</option>
-            <option value="Dubai Marina">{t('location.dubaiMarina')}</option>
-            <option value="Downtown Dubai">{t('location.downtownDubai')}</option>
-            <option value="Palm Jumeirah">{t('location.palmJumeirah')}</option>
-            <option value="Arabian Ranches">{t('location.arabianRanches')}</option>
-            <option value="JBR">{t('location.jbr')}</option>
-            <option value="Business Bay">{t('location.businessBay')}</option>
-            <option value="DIFC">{t('location.difc')}</option>
-            <option value="Dubai Hills Estate">{t('location.dubaiHills')}</option>
+            {cities.map((city) => (
+              <option key={city.name} value={city.name}>
+                {city.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -56,26 +132,45 @@ export default function SearchBar() {
             className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-500 outline-none"
           >
             <option value="">{t('search.typeAll')}</option>
-            <option value="villa">{t('type.villa')}</option>
-            <option value="apartment">{t('type.apartment')}</option>
-            <option value="townhouse">{t('type.townhouse')}</option>
-            <option value="commercial">{t('type.commercial')}</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.type}>
+                {category.name}
+              </option>
+            ))}
           </select>
         </div>
 
-        {/* Price Range */}
+        {/* Min Price */}
         <div>
-          <label className="block text-white text-sm font-medium mb-2">{t('search.price')}</label>
+          <label className="block text-white text-sm font-medium mb-2">{t('filters.minPrice')}</label>
           <select
-            value={filters.priceRange}
-            onChange={(e) => setFilters({ ...filters, priceRange: e.target.value })}
+            value={filters.minPrice}
+            onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
             className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-500 outline-none"
           >
-            <option value="">{t('search.priceAll')}</option>
-            <option value="0-1000000">{t('price.under1m')}</option>
-            <option value="1000000-5000000">{t('price.1to5m')}</option>
-            <option value="5000000-10000000">{t('price.5to10m')}</option>
-            <option value="10000000-999999999">{t('price.over10m')}</option>
+            <option value="">{t('filters.noMin')}</option>
+            {minPriceOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Max Price */}
+        <div>
+          <label className="block text-white text-sm font-medium mb-2">{t('filters.maxPrice')}</label>
+          <select
+            value={filters.maxPrice}
+            onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
+            className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-500 outline-none"
+          >
+            <option value="">{t('filters.noMax')}</option>
+            {maxPriceOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </div>
 

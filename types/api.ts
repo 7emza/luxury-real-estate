@@ -22,6 +22,7 @@ export interface Currency {
   name: string; // Full name (e.g., "US Dollar", "Euro", "Moroccan Dirham")
   symbolPosition: 'before' | 'after'; // Where to place symbol relative to amount
   decimalPlaces: number; // Number of decimal places (usually 2)
+  exchangeRate?: number; // Exchange rate relative to base currency (MAD), e.g., 1 USD = 10.0 MAD
 }
 
 export interface LanguageConfig {
@@ -37,6 +38,7 @@ export interface SiteSettings {
   siteName: string;
   siteDescription: string;
   logo: string;
+  heroBackgroundImage?: string;
   contactInfo: {
     phone: string;
     email: string;
@@ -236,6 +238,13 @@ export interface Agent {
   image: string;
 }
 
+export interface CurrencyPrice {
+  price: number;
+  rent: number | null;
+  symbol: string;
+  position: string;
+}
+
 export interface Property {
   id: number;
   title: string;
@@ -243,8 +252,14 @@ export interface Property {
   status: 'For Sale' | 'For Rent';
   price: number;
   pricePerMonth?: number;
+  prices?: { [currency: string]: CurrencyPrice }; // Multi-currency prices
+  currency?: string;
   location: string;
   address: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
   bedrooms: number;
   bathrooms: number;
   area: number;
@@ -260,7 +275,9 @@ export interface Property {
 export interface SearchFilters {
   location?: string;
   type?: string;
-  priceRange?: string;
+  priceRange?: string; // Legacy support
+  minPrice?: string;
+  maxPrice?: string;
   bedrooms?: number;
   status?: string;
   sortBy?: string;

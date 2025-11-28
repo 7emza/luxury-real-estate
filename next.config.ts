@@ -11,8 +11,13 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'randomuser.me',
       },
+      {
+        protocol: 'https',
+        hostname: 'wordpress.7emza.ma',
+      },
     ],
   },
+  allowedDevOrigins: ['7emza.ma'],
 };
 
 export default nextConfig;
